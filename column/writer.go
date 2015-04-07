@@ -1,7 +1,6 @@
 // package column implements an io.Writer which formats
 // input lines into columns.
-
-package column
+package column // import sigint.ca/text/column
 
 import (
 	"bytes"
