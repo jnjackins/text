@@ -67,23 +67,32 @@ func maxlen(words []string) int {
 func (w *Writer) split(words []string, cols *[]column) bool {
 	// try to become one column wider
 	newcols := make([]column, len(*cols)+1)
+	percol := len(words) / len(newcols)
+	if len(words)%len(newcols) != 0 {
+		percol++
+	}
 	for colnum := range newcols {
-		percol := (len(words) + len(newcols) - 1) / len(newcols)
 		i, j := percol*colnum, percol*colnum+percol
-		if i > len(words) {
-			return false
-		}
 		if j > len(words) {
 			j = len(words)
 		}
-		colwords := words[i:j]
-		newcols[colnum] = column{words: colwords}
+
+		// empty columns are possible, bail out if we've reached one.
+		// otherwise, slice out some words for the column.
+		if i < len(words) {
+			colwords := words[i:j]
+			newcols[colnum] = column{words: colwords}
+		} else {
+			break
+		}
 	}
 
-	// if we're too wide now, revert
+	// if newcols is too wide, discard it and stop
 	if w.totalwidth(newcols) >= w.maxwidth {
 		return false
 	}
+
+	// otherwise, tell the caller to continue splitting
 	*cols = newcols
 	return true
 }
