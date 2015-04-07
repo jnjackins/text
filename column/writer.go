@@ -41,7 +41,7 @@ type column struct {
 // Flush performs the columnation and writes the results to the column.Writer's
 // backing io.Writer.
 func (w *Writer) Flush() error {
-	words := strings.Fields(w.buf.String())
+	words := strings.Split(w.buf.String(), "\n")
 	w.colwidth = maxlen(words)
 	cols := make([]column, 1)
 	cols[0].words = words
